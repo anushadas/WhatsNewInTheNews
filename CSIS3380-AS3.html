@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+				
+		<style>
+			body{
+				background-color: #a8fdec;
+			}
+			h1, h2{
+				padding-left: 50px;
+				color:navy;
+			}
+			#form1, #form2, #headlineResults, #topicResults{
+				
+				padding-left: 50px;
+			}
+			label{
+				font-weight: bold;
+			}
+		</style>
+<!-- ===========================================================-->
+	<!-- ENTER STUDENT INFORMATION BELOW 
+
+		PLEASE TYPE YOUR NAME BELOW:
+		
+		NAME      :  ANUSHA DAS
+		STUDENT ID:  300283182
+
+		END OF STUDENT INFORMATION -->	
+<!-- ===========================================================-->		
+	</head>
+	
+	<body>
+	
+	<h1>Ajax App for News</h1>
+	<hr size="2" color="navy" />
+	<br />
+<!-- ===========================================================-->	
+	<!-- START OF PART 3.a FORM -->
+  <div id="form1">
+	<form id="headline_news"> 
+	<label>Select country to display headline news for:</label>
+	<select id="countries">
+		<option value="us">U.S.</option>
+		<option value="ca">Canada</option>
+		<option value="in">India</option>
+	</select></span>
+	<input type="reset" id="reset1" name="reset" value="Reset" /> &nbsp;
+	<input type="button" id="getNews1" value="Get News Headlines" />
+	</form>
+	</div>
+	<!-- END OF PART 3.a FORM -->
+<!-- ===========================================================-->
+	<script>
+		function GetNewsHeadLines(selectedCountry)
+		{
+			document.getElementById("topicHeading").innerHTML = "";
+			document.getElementById("topicResults").innerHTML = "";
+			document.getElementById("headlineResults").innerHTML = "";
+			//create XML HTTP request Object
+   			var ajaxRequest = new XMLHttpRequest();
+   		
+   			var key = "08553134f2134a50a03e3f8fc576870b";
+   			
+   			ajaxRequest.open("GET","https://newsapi.org/v2/top-headlines?country="+selectedCountry+"&category=business&apiKey="+key);
+   			
+   			ajaxRequest.send();
+   			
+   			ajaxRequest.onreadystatechange = function(){
+   			//check state of Request
+   			if((ajaxRequest.readyState == 4) && (ajaxRequest.status == 200))
+   			{
+   				//check by displaying in an alert()
+   				//alert(ajaxRequest.responseText);
+   				
+   				var objJSON = JSON.parse(ajaxRequest.responseText);
+   				//alert(objJSON["articles"][0].title);
+   				var country = "U.S";
+   				if(selectedCountry == "ca")
+   				{
+   					country = "Canada";
+   				} 
+   				if(selectedCountry == "in" )
+   				{
+   					country = "India";
+   				}
+   				document.getElementById("headlineHeading").innerHTML = "News Headlines for "+country;
+				var articles = objJSON["articles"];
+				for(var i =0;i<articles.length;i++)
+				{
+					var url = articles[i]["url"];
+					var urlToImage = articles[i]["urlToImage"];
+					document.getElementById("headlineResults").innerHTML += "<b>Title: " +articles[i]["title"]+ "</b><br />";
+					document.getElementById("headlineResults").innerHTML += "Description: "+articles[i]["description"]+ "<br />";
+					document.getElementById("headlineResults").innerHTML += "<a href='"+ url+ "'>"+ url +"</a><br />";
+					document.getElementById("headlineResults").innerHTML += "<a href='"+urlToImage+ "'>"+urlToImage+"</a><br />";
+					document.getElementById("headlineResults").innerHTML += "<br />";
+				}	
+   			}
+   			}
+   		}
+		document.getElementById("getNews1").onclick = function(){ GetNewsHeadLines(document.getElementById("countries").value) };
+	</script>
+	<br />
+<!-- ===========================================================-->
+	<!-- START OF PART 3.b FORM -->
+	<div id="form2">
+		<form id="news_topic">
+	<label>Enter term/phrase to search related news:</label>
+	<input type="text" id="topicNews" size="50" /> &nbsp;
+	<input type="reset" id="reset2" name="reset" value="Clear" /> &nbsp;
+	<input type="button" id="getNews2" value="Get Related News" />
+	</form>
+	</div>
+	<!-- END OF PART 3.b FORM -->
+<!-- ===========================================================-->	
+	<script>
+		function GetRelatedNews(searchTerm)
+		{
+			document.getElementById("headlineResults").innerHTML = "";
+			document.getElementById("headlineHeading").innerHTML = "";
+			document.getElementById("topicResults").innerHTML = "";
+			//create XML HTTP request Object
+   			var ajaxRequest = new XMLHttpRequest();
+   		
+   			var key = "08553134f2134a50a03e3f8fc576870b";
+   			
+   			ajaxRequest.open("GET","https://newsapi.org/v2/everything?q="+ searchTerm +"&from=2019-07-24&to=2019-07-24&sortBy=popularity&apiKey=" + key);
+   			
+   			ajaxRequest.send();
+   			ajaxRequest.onreadystatechange = function(){
+   			//check state of Request
+   			if((ajaxRequest.readyState == 4) && (ajaxRequest.status == 200))
+   			{
+   				//check by displaying in an alert()
+   				//alert(ajaxRequest.responseText);
+   				var objJSON = JSON.parse(ajaxRequest.responseText);
+   				document.getElementById("topicHeading").innerHTML = "Recent News Related To "+searchTerm;
+				var articles = objJSON["articles"];
+				for(var i =0;i<articles.length;i++)
+				{
+					document.getElementById("topicResults").innerHTML += "<b>Title: " +articles[i]["title"]+ "</b><br />";
+					document.getElementById("topicResults").innerHTML += "Description: "+articles[i]["description"]+ "<br />";
+					document.getElementById("topicResults").innerHTML += "<a href='#'>"+articles[i]["url"]+ "</a><br />";
+					document.getElementById("topicResults").innerHTML += "<a href='#'>"+articles[i]["urlToImage"]+ "</a><br />";
+					document.getElementById("topicResults").innerHTML += "<br />";
+				}
+   			}
+   			}
+		}
+		document.getElementById("getNews2").onclick = function(){ GetRelatedNews(document.getElementById("topicNews").value)};
+	</script>
+<!-- ===========================================================-->
+	<!-- START OF PART 3.a DISPLAY -->
+	<h2 id="headlineHeading"></h2>
+	<div id="headlineResults"></div>
+	<!-- END OF PART 3.a DISPLAY -->
+<!-- ===========================================================-->	
+
+<!-- ===========================================================-->	
+  <!-- START OF PART 3.b DISPLAY -->
+	<h2 id="topicHeading"></h2>
+   <div id="topicResults"></div>
+   <!-- END OF PART 3.b DISPLAY -->
+<!-- ===========================================================-->	
+
+		
+	</body>
+</html>
